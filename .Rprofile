@@ -1,6 +1,15 @@
 source("renv/activate.R")
 missing_pkgs <- names(which(!sapply(
-  X = c("languageserver", "httpgd", "lintr", "styler", "gert", "prompt", "svglite", "ragg"),
+  X = c(
+    "languageserver",
+    "httpgd",
+    "lintr",
+    "styler",
+    "gert",
+    "prompt",
+    "svglite",
+    "ragg"
+  ),
   FUN = function(x) nzchar(system.file(package = x))
 )))
 if (length(missing_pkgs) > 0) {

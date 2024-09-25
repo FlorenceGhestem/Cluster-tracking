@@ -1,0 +1,34 @@
+{
+	"name": "Python Dev Container",
+	"build": {
+			"dockerfile": "../Dockerfile",
+			"context": ".."
+	},
+	"postCreateCommand": "pip install --no-cache-dir -r requirements.txt",
+	"remoteUser": "root",
+	"customizations": {
+		"vscode": {
+			"extensions": [
+				"REditorSupport.r",
+				"usernamehw.errorlens",
+				"GitHub.vscode-pull-request-github",
+				"eamodio.gitlens",
+				"ms-vscode.live-server",
+				"yzhang.markdown-all-in-one",
+				"DavidAnson.vscode-markdownlint",
+				"ms-azuretools.vscode-docker",
+				"ms-python.black-formatter",
+				"ms-python.isort",
+				"ms-python.vscode-pylance",
+				"ms-python.pylint",
+				"ms-python.python"
+			],
+			"settings": {
+				"python.pythonPath": "/usr/local/bin/python",
+				"python.formatting.provider": "black",
+				"python.linting.enabled": true,
+				"python.linting.pylintEnabled": true
+			}
+		}
+	}
+}
