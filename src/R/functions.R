@@ -17,19 +17,19 @@ alluvial <- function(age, method, size){
   
   #Total of patients belonging to clusters >= 'size' from 60 to 70 years old 
   pat_tot <- lapply(age[1]:tail(age,1), function(x){
-    tab <- read.csv(paste0("Data/clusters_", tab_method, "_", x, ".csv"), sep = ";")
+    tab <- read.csv(paste0("../../data/output/clusters_", tab_method, "_", x, ".csv"), sep = ";")
     tab[tab[,2] %in% names(which(table(tab[,2])>=size)),1]})
   pat_tot <- as.character(unique(unlist(pat_tot)))
   
   #Patient characteristics
-  pat_ch <- read.csv("Data/patient_characteristics.csv", sep = ";", header = TRUE, colClasses = c("character", NA, NA, NA))[, c(1,3,4)] #patient Ids + year of  birth + year of death
+  pat_ch <- read.csv("../../data/input/patient_characteristics.csv", sep = ";", header = TRUE, colClasses = c("character", NA, NA, NA))[, c(1,3,4)] #patient Ids + year of  birth + year of death
   rownames(pat_ch) <- pat_ch[,1]
   pat_ch <- pat_ch[pat_tot,] #Characteristics of selected patients
   pat_ch[,3] <- ifelse(is.na(pat_ch[,3]), Inf, pat_ch[,3]) #replacing NA in year of death by Inf
   
   for(i in age){
     #Clusters identified at age i with the selected 'method'
-    clust_tab <- read.csv(paste0("Data/clusters_", tab_method, "_", i, ".csv"), sep = ";", colClasses = c("character", NA))
+    clust_tab <- read.csv(paste0("../../data/output/clusters_", tab_method, "_", i, ".csv"), sep = ";", colClasses = c("character", NA))
     
     #Keep only clusters >= 'size'
     isolate <- names(which(table(clust_tab[,2])<size))
@@ -111,7 +111,7 @@ flowchart <- function(age, method, size){
   allu_tab <- alluvial(age, method, size)
   
   #Patient characteristics
-  pat_ch <- read.csv("Data/patient_characteristics.csv", sep = ";", header = TRUE, colClasses = c("character", NA, NA, NA))[, c(1,2)] #patient ids + sex
+  pat_ch <- read.csv("../../data/input/patient_characteristics.csv", sep = ";", header = TRUE, colClasses = c("character", NA, NA, NA))[, c(1,2)] #patient ids + sex
   rownames(pat_ch) <- pat_ch[,1]
   
   for(i in head(age, -1)){
@@ -128,8 +128,8 @@ flowchart <- function(age, method, size){
     names(pat_clust2) <- clust_label
     
     #Tables of prescriptions
-    pres_tab1 <- read.csv(paste0("Data/pres_", i, ".csv"), sep = ";", check.names = FALSE) #at age i
-    pres_tab2 <- read.csv(paste0("Data/pres_", i+1, ".csv"), sep = ";", check.names = FALSE) #at age i+1
+    pres_tab1 <- read.csv(paste0("../../data/input/pres_", i, ".csv"), sep = ";", check.names = FALSE) #at age i
+    pres_tab2 <- read.csv(paste0("../../data/input/pres_", i+1, ".csv"), sep = ";", check.names = FALSE) #at age i+1
     
     #Combinations of clusters at age i and i+1
     pat_combi <- expand.grid(pat_clust1,pat_clust2)

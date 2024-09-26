@@ -22,7 +22,7 @@ def construct_similarity_matrix(age):
 def cluster_patient_network(age):
     # Similarity matrix at given age
     cos_tab = pd.read_parquet(f"data/output/cosine_{age}.gzip")
-    cos_tab.values[[np.arange(cos_tab.shape[0])]*2] = 0  # We set the diagonal of the matrix to 0
+    cos_tab.values[np.arange(cos_tab.shape[0]), np.arange(cos_tab.shape[0])] = 0  # We set the diagonal of the matrix to 0
     cos_tab.mask(cos_tab < 0.7, 0, inplace=True)  # We filtered the matrix with the chosen Cosine similarity threshold = 0.7
 
     # Network construction
@@ -56,7 +56,7 @@ def cluster_patient_network(age):
     clust_data = pd.DataFrame(res, columns=['Patient', 'cluster'])
 
     # Save
-    clust_data.to_csv(f"data/outputclusters_net_{age}.csv", sep=";", index=False)
+    clust_data.to_csv(f"data/output/clusters_net_{age}.csv", sep=";", index=False)
     return clust_data
 
 def cluster_raw_data(age, n_clusters):
@@ -84,15 +84,21 @@ def main():
     for age in ages:
         construct_similarity_matrix(age)
     
+    print(f"Similarity matrix completed for all ages.")
+    
     # Cluster patient networks for all ages
     for age in ages:
         cluster_patient_network(age)
+    
+    print(f"Clustering on patients network completed for all ages.")
     
     # Cluster raw data for all ages
     # Note: You'll need to determine the optimal number of clusters for each age
     # This example uses a fixed number (6) for demonstration purposes
     for age in ages:
         cluster_raw_data(age, n_clusters=6)
+    
+    print(f"Clustering on raw data completed for all ages.")
     
     print("Clustering analysis completed for all ages.")
 

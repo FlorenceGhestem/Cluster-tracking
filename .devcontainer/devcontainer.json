@@ -1,17 +1,18 @@
 {
-	"name": "Cluster-Tracking Dev Container",
+	"name": "Cluster-tracking",
 	"build": {
 			"dockerfile": "Dockerfile"
 	},
-	"workspaceFolder": "/cluster-tracking",
-	"settings": {
-			"python.pythonPath": "/usr/local/bin/python"
-	},
+	"postCreateCommand": "pip install -r requirements.txt",
 	"extensions": [
 			"ms-python.python",
-			"ms-azuretools.vscode-docker",
-			"eamodio.gitlens"
+			"ms-python.vscode-pylance",
+			"ms-azuretools.vscode-docker"
 	],
-	"postCreateCommand": "pip install -r requirements.txt",
-	"remoteUser": "root"
+	"settings": {
+			"python.pythonPath": "/usr/local/bin/python",
+			"python.linting.enabled": true,
+			"python.linting.pylintEnabled": true
+	},
+	"remoteUser": "vscode"
 }

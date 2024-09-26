@@ -1,18 +1,33 @@
 FROM python:3.8-slim
 
-# Install any required system packages here
+# Éviter les messages d'avertissement lors de la création de l'image
+ENV DEBIAN_FRONTEND=noninteractive
+
+# Mettre à jour et installer les dépendances
 RUN apt-get update && apt-get install -y \
-    build-essential \
+    git \
     && rm -rf /var/lib/apt/lists/*
 
-# Set the working directory inside the container
-WORKDIR /cluster-tracking
+# Créer un utilisateur non-root
+ARG USERNAME=vscode
+ARG USER_UID=1000
+ARG USER_GID=$USER_UID
 
-# Copy the requirements.txt file into the container
-COPY requirements.txt .
+RUN groupadd --gid $USER_GID $USERNAME \
+    && useradd --uid $USER_UID --gid $USER_GID -m $USERNAME \
+    && apt-get update \
+    && apt-get install -y sudo \
+    && echo $USERNAME ALL=\(root\) NOPASSWD:ALL > /etc/sudoers.d/$USERNAME \
+    && chmod 0440 /etc/sudoers.d/$USERNAME
 
-# Install the required Python packages
-RUN pip install -r requirements.txt
+# Définir l'utilisateur par défaut
+USER $USERNAME
 
-# Copy the rest of your application files into the container
-COPY . .
+# Définir le répertoire de travail
+WORKDIR /workspace
+
+# Copier les fichiers du projet (à ajuster selon votre structure)
+COPY . /workspace/
+
+# Installer les dépendances Python
+RUN pip install --upgrade pip
