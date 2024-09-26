@@ -78,7 +78,7 @@ def cluster_raw_data(age, n_clusters):
 
 def main():
     # Example usage
-    ages = range(60, 70)  # Assuming we're analyzing ages 60 to 70
+    ages = range(60, 71)  # Assuming we're analyzing ages 60 to 70
     
     # Construct similarity matrices for all ages
     for age in ages:
