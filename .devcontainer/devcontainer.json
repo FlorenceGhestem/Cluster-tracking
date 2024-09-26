@@ -1,7 +1,8 @@
 {
 	"name": "Cluster-tracking",
 	"build": {
-			"dockerfile": "Dockerfile"
+			"dockerfile": "Dockerfile",
+			"context": ".."
 	},
 	"extensions": [
 			"ms-python.python",
@@ -12,6 +13,5 @@
 			"python.pythonPath": "/usr/local/bin/python",
 			"python.linting.enabled": true,
 			"python.linting.pylintEnabled": true
-	},
-	"remoteUser": "vscode"
+	}
 }
