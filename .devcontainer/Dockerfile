@@ -47,7 +47,7 @@ RUN R -e "install.packages('shiny', repos='https://cloud.r-project.org/')"
 WORKDIR /workspace
 
 # Set environment variables
-ENV PYTHONPATH "${PYTHONPATH}:/workspace/src/python"
-ENV R_LIBS_USER "/workspace/renv/library"
+ENV PYTHONPATH="/workspace/src/python:${PYTHONPATH}"
+ENV R_LIBS_USER="/workspace/renv/library"
 
 CMD ["/bin/bash"]
