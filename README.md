@@ -2,7 +2,7 @@
 
 ## Purpose of the Repository
 
-This repository contains the implementation of two novel cluster-tracking approaches for analyzing longitudinal patient data extracted from medico-administrative databases, this is intially a fork from (JudithLamb/Cluster-tracking)[https://github.com/JudithLamb/Cluster-tracking]. The primary goals of this research are:
+This repository contains the implementation of two novel cluster-tracking approaches for analyzing longitudinal patient data extracted from medico-administrative databases, this is initially a fork from [JudithLamb/Cluster-tracking](https://github.com/JudithLamb/Cluster-tracking). The primary goals of this research are:
 
 1. To identify clusters of patients at different ages using two clustering strategies:
    a. Markov Cluster algorithm (MCL) applied to patient networks built from raw data
@@ -18,7 +18,7 @@ This repository aims to provide an environment to run the code with the right de
 
 ## Repository Structure
 
-```
+```{.sh}
 .
 ├── .devcontainer
 │   ├── devcontainer.json
@@ -54,25 +54,31 @@ There are two ways to set up the development environment: using the pre-built im
 1. Ensure you have Docker installed and running on your machine.
 
 2. Pull the pre-built image from GitHub Container Registry:
-   ```
+
+   ```{.sh}
    docker pull ghcr.io/YOUR_GITHUB_USERNAME/your-repo-name:latest
    ```
+
    Replace `YOUR_GITHUB_USERNAME` and `your-repo-name` with the appropriate values.
 
 3. If the repository is private, you'll need to authenticate with GitHub Container Registry first:
-   ```
+
+   ```{.sh}
    echo $GITHUB_PAT | docker login ghcr.io -u YOUR_GITHUB_USERNAME --password-stdin
    ```
+
    Replace `$GITHUB_PAT` with your GitHub Personal Access Token.
 
 4. Clone this repository:
-   ```
+
+   ```{.sh}
    git clone https://github.com/FlorenceGhestem/Cluster-tracking.git
    cd Cluster-tracking
    ```
 
 5. Open the repository in Visual Studio Code:
-   ```
+
+   ```{.sh}
    code .
    ```
 
@@ -85,17 +91,19 @@ There are two ways to set up the development environment: using the pre-built im
 If you prefer to build the image locally or need to make modifications:
 
 1. Clone this repository:
-   ```
+
+   ```{.sh}
    git clone https://github.com/FlorenceGhestem/Cluster-tracking.git
    cd Cluster-tracking
    ```
 
 2. Open the repository in Visual Studio Code:
-   ```
+
+   ```{.sh}
    code .
    ```
 
-3. When prompted by VS Code, click "Reopen in Container" or use the command palette (Crtl+Shift+P) and select "Remote-Containers: Reopen in Container".
+3. When prompted by VS Code, click "Reopen in Container" or use the command palette (Ctrl+Shift+P) and select "Remote-Containers: Reopen in Container".
 
 4. VS Code will build the Docker image based on the Dockerfile in the `.devcontainer` directory. This may take a few minutes the first time.
 
@@ -105,11 +113,14 @@ If you prefer to build the image locally or need to make modifications:
 
 1. Open a terminal in VS Code (Terminal -> New Terminal).
 2. Navigate to the Python source directory:
-   ```
+
+   ```{.sh}
    cd src/python
-   ```
+   ```{.sh}
+
 3. Run the Python script:
-   ```
+
+   ```{.sh}
    python cluster_tracking.py
    ```
 
@@ -118,16 +129,21 @@ If you prefer to build the image locally or need to make modifications:
 1. Open a terminal in VS Code.
 
 2. Start R by typing:
-   ```
+
+   ```{.sh}
    R
    ```
+
 3. In the R console, run:
-   ```R
+
+   ```{r}
     shiny::runApp("src/R/app.R", host = "0.0.0.0", port = 3838)
    ```
+
 4. Access the Shiny app in your browser at `http://localhost:3838`.
 
 The R Shiny app allows you to visualize the tracking of clusters and the cluster-trajectories from the simulated data. It provides:
+
 - An alluvial plot showing the tracking of clusters, where blocks represent clusters and stream fields represent common patients.
 - A flowchart visualizing cluster-trajectories, with blocks representing clusters and arrow thickness indicating the number of common patients.
 - Cluster characteristics, including the two most used drugs, sex ratio, and total number of patients.
@@ -153,9 +169,11 @@ If you need to modify the development environment:
 
 1. In the R console within the container, use `renv::install()` to install new packages.
 2. Update the `renv.lock` file:
-   ```R
+
+   ```{R}
    renv::snapshot()
    ```
+
 3. Commit the updated `renv.lock` file to the repository.
 
 ## Troubleshooting
@@ -166,7 +184,7 @@ If you need to modify the development environment:
 
 ## License
 
-This project is licensed under the [LICENSE NAME] - see the [LICENSE](LICENSE) file for details.
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
 ## References
 
