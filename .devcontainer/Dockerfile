@@ -3,6 +3,15 @@ FROM ubuntu:20.04
 # Avoid prompts from apt
 ENV DEBIAN_FRONTEND=noninteractive
 
+# Set up locale
+RUN apt-get update && apt-get install -y locales && \
+    locale-gen en_US.UTF-8 && \
+    update-locale LANG=en_US.UTF-8 LC_ALL=en_US.UTF-8
+
+# Set environment variables for locale
+ENV LANG=en_US.UTF-8
+ENV LC_ALL=en_US.UTF-8
+
 # Install basic dependencies
 RUN apt-get update && apt-get install -y \
     software-properties-common \
