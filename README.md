@@ -1,137 +1,173 @@
-# Cluster-tracking approach
+# Cluster-Tracking Approach for Longitudinal Patient Data Analysis
 
-We propose two novel approaches based on cluster-tracking for clustering patients from longitudinal data extracted from medico-administrative databases. These approaches start by identifying clusters of patients at each considered age. To this goal, we used two different clustering strategies: the Markov Cluster algorithm (MCL) applied to patient networks built from raw data and Kmeans applied directly to raw data. Clusters are then tracked over ages to define cluster-trajectories. We applied our approaches to the analysis of antithrombotic drug reimbursements extracted from the Échantillon Généraliste des Bénéficiaires (EGB, a French cohort) between 2008 and 2018 in patients aged from 60 to 70 years old. For privacy reasons, this raw dataset cannot be shared publicly. Hence, from this raw dataset, we created a simulated dataset of 5594 patients with their drug reimbursements. This simulated sample dataset is used in the following to apply our two cluster-tracking approaches.
+## Purpose of the Repository
 
-## Identifying clusters of patients from patient networks
+This repository contains the implementation of two novel cluster-tracking approaches for analyzing longitudinal patient data extracted from medico-administrative databases, this is intially a fork from (JudithLamb/Cluster-tracking)[https://github.com/JudithLamb/Cluster-tracking]. The primary goals of this research are:
 
-The first clustering strategy used to identify clusters of patients relies on the construction of patient networks. We started by constructing a patient network for each age considered. We then applied the MCL clustering algorithm on each network [[1]](#1).
+1. To identify clusters of patients at different ages using two clustering strategies:
+   a. Markov Cluster algorithm (MCL) applied to patient networks built from raw data
+   b. K-means applied directly to raw data
+2. To track these clusters over time, defining cluster-trajectories
+3. To visualize the results using an R Shiny application
 
-### Constructing patient networks
+The approaches were initially applied to antithrombotic drug reimbursements data from the Échantillon Généraliste des Bénéficiaires (EGB, a French cohort) between 2008 and 2018 for patients aged 60 to 70 years. Due to privacy concerns, this repository uses a simulated dataset of 5,594 patients with their drug reimbursements, derived from the original raw data.
 
-A patient network is a graph $G = (V,E)$ with $V$ patient nodes and $E$ edges representing interactions between patient nodes. We built a network for each patient age. Each network is constructed using a similarity matrix. In this similarity matrix, we computed the similarity between patients of the same age using the Cosine similarity.
+This work aims to provide researchers and healthcare professionals with tools to better understand patient trajectories and drug usage patterns over time.
 
-```python
-import pandas as pd #version 1.2.0
-from sklearn.metrics.pairwise import cosine_similarity #version 0.24.1 of sklearn
+This repository aims to provide an environment to run the code with the right dependencies, to get familiar with the code.
 
-#Construction of the similarity matrix at age 60
+## Repository Structure
 
-#Table of reimbursements at age 60
-pres_tab = pd.read_csv("Data/pres_60.csv", sep = ";")
-
-#Computation of the Cosine similarity between patients 
-cos_DF = pd.DataFrame(cosine_similarity(pres_tab),
-                      columns = pres_tab.index.astype("str"),
-                      index = pres_tab.index.astype("str")) 
-
-#Save
-cos_DF.to_parquet("Data/cosine_60.gzip", compression="gzip")  
+```
+.
+├── .devcontainer
+│   ├── devcontainer.json
+│   └── Dockerfile
+├── LICENSE
+├── README.md
+├── data
+│   ├── README.md
+│   ├── input
+│   └── output
+├── renv.lock
+├── requirements.txt
+└── src
+    ├── R
+    │   ├── app.R
+    │   └── functions.R
+    └── python
+        └── cluster_tracking.py
 ```
 
-We then filtered the similaritry matrices according to a threshold. This threshold is chosen in order to reduce the number of edges in the networks while obtaining a minimum number of isolated patients. From the matrices constructed with the simulated sample, we choose a threshold of 0.7 because this is the threshold for which we observe the fastest decrease in the number of edges and there is only a small number of isolated patients (see figure below).
+## Prerequisites
 
-![example visualization](Figures/cosine_threshold.png)
+- [Docker](https://www.docker.com/products/docker-desktop)
+- [Visual Studio Code](https://code.visualstudio.com/)
+- [Remote - Containers extension](https://marketplace.visualstudio.com/items?itemName=ms-vscode-remote.remote-containers) for VS Code
 
-From each filtered matrix, we obtained a patient network in which patients are connected only if they have a Cosine similarity $\ge 0.7$. The patient network containing 60-year-old patients is represented in the figure below.
+## Getting Started
 
-![example visualization](Figures/network_60.png)
+There are two ways to set up the development environment: using the pre-built image from GitHub Container Registry or building the image locally.
 
-### Clustering patient networks
+### Option 1: Using the Pre-built Image (Recommended)
 
-We applied the Markov Cluster algorithm (MCL) on the largest connected component of each patient network constructed.
+1. Ensure you have Docker installed and running on your machine.
 
-```python
-import pandas as pd #version 1.2.0
-import numpy as np #version 1.21.4
-import networkx as nx #version 2.3
-import markov_clustering as mc #version 0.0.6.dev0
+2. Pull the pre-built image from GitHub Container Registry:
+   ```
+   docker pull ghcr.io/YOUR_GITHUB_USERNAME/your-repo-name:latest
+   ```
+   Replace `YOUR_GITHUB_USERNAME` and `your-repo-name` with the appropriate values.
 
-#Similarity matrix at age 60
-cos_tab = pd.read_parquet("Data/cosine_60.gzip")
-cos_tab.values[[np.arange(cos_tab.shape[0])]*2] = 0 #We set the diagonal of the matrix to 0
-cos_tab.mask(cos_tab<0.7, 0, inplace=True) #We filtered the matrix with the chosen Cosine similarity threshold = 0.7
+3. If the repository is private, you'll need to authenticate with GitHub Container Registry first:
+   ```
+   echo $GITHUB_PAT | docker login ghcr.io -u YOUR_GITHUB_USERNAME --password-stdin
+   ```
+   Replace `$GITHUB_PAT` with your GitHub Personal Access Token.
 
-#Network construction
-G = nx.from_pandas_adjacency(cos_tab)
+4. Clone this repository:
+   ```
+   git clone https://github.com/FlorenceGhestem/Cluster-tracking.git
+   cd Cluster-tracking
+   ```
 
-#Component extraction
-Gcc1 = sorted(nx.connected_components(G), key = len, reverse = True)[0] #The largest connected component
-Gcc2 = sorted(nx.connected_components(G), key = len, reverse = True)[1:] #The other connected components
+5. Open the repository in Visual Studio Code:
+   ```
+   code .
+   ```
 
-#Largest connected component network
-G = G.subgraph(Gcc1) 
+6. When prompted by VS Code, click "Reopen in Container" or use the command palette (F1) and select "Remote-Containers: Reopen in Container".
 
-#Extractions of clusters from MCL algorithm applied to the largest connected component network
-mat = nx.to_scipy_sparse_matrix(G)
-mcl = mc.run_mcl(mat) 
-clust = mc.get_clusters(mcl) #list of identified clusters
-pat = list(G.nodes()) #Patient IDs
-res = []
-for y in np.arange(len(clust)):
-    for j in clust[y]:
-        res.append([pat[j], y+1]) #Patient ids + cluster they belong to
+7. VS Code will use the pre-built image to create your development container.
 
-#Extraction of clusters from the other connected components: each connected component represent a cluster
-y = y+2 #next cluster
-if len(Gcc2)!=0:
-    for g in Gcc2:
-        for pat in g:
-            res.append([pat, y]) #Patient ids + cluster they belong to
-        y = y+1
+### Option 2: Building the Image Locally
 
-clust_data = pd.DataFrame(res, columns=['Patient', 'cluster'])
+If you prefer to build the image locally or need to make modifications:
 
-#Save
-clust_data.to_csv("Data/clusters_net_60.csv", sep = ";", index = False)
-```
+1. Clone this repository:
+   ```
+   git clone https://github.com/FlorenceGhestem/Cluster-tracking.git
+   cd Cluster-tracking
+   ```
 
-## Identifying clusters of patients from raw data
+2. Open the repository in Visual Studio Code:
+   ```
+   code .
+   ```
 
-The second clustering strategy used to identify clusters of patients relies on raw data. We used Kmeans that we applied directly to raw data, for each patient age. As in Kmeans the number of clusters must be specified *a priori*, we determined the optimal number of clusters per age by calculating the silhouette score. We varied the number of clusters from 2 to 200. The optimal number of clusters $K$ identified at each age from the simulated sample is represented in the figure below.
+3. When prompted by VS Code, click "Reopen in Container" or use the command palette (Crtl+Shift+P) and select "Remote-Containers: Reopen in Container".
 
-![example visualization](Figures/silhouette_raw.png)
+4. VS Code will build the Docker image based on the Dockerfile in the `.devcontainer` directory. This may take a few minutes the first time.
 
-We can therefore apply Kmeans at each age with the optimal number of clusters identified.
+## Using the Development Environment
 
-```python
-import pandas as pd #version 1.2.0
-from scikit-learn.cluster import KMeans #version 0.24.1 of sklearn
+### Running Python Scripts
 
-#Table of reimbursements at age 60
-pres_tab = pd.read_csv("Data/pres_60.csv", sep = ";")
+1. Open a terminal in VS Code (Terminal -> New Terminal).
+2. Navigate to the Python source directory:
+   ```
+   cd src/python
+   ```
+3. Run the Python script:
+   ```
+   python cluster_tracking.py
+   ```
 
-#Kmeans applied with 6 clusters, the optimal number of cluster identified at age 60
-KM = KMeans(n_clusters=6).fit(pres_tab.values)
-label = KM.labels_
-id_label = pres_tab.index
-res = []
-for j in np.arange(len(label)):
-    res.append([id_label[j], label[j]+1]) #Patient ids + cluster they belong
-clust_data = pd.DataFrame(res, columns=['Patient', 'cluster'])
+### Running the R Shiny App
 
-#Save
-clust_data.to_csv("Data/clusters_raw_60.csv" , sep = ";", index = False)
-```
+1. Open a terminal in VS Code.
 
-## Tracking clusters over ages
+2. Start R by typing:
+   ```
+   R
+   ```
+3. In the R console, run:
+   ```R
+    shiny::runApp("src/R/app.R", host = "0.0.0.0", port = 3838)
+   ```
+4. Access the Shiny app in your browser at `http://localhost:3838`.
 
-We identified sets of clusters per age either from patient networks with MCL or from raw data with Kmeans. We then intend to follow the clusters over the different ages. To this goal, we computed the number of common patients between every pair of clusters obtained at 2 consecutive ages. By considering only the largest number of common patients between all consecutive clusters, we were able to identify sets of successive clusters that we called cluster-trajectories.
+The R Shiny app allows you to visualize the tracking of clusters and the cluster-trajectories from the simulated data. It provides:
+- An alluvial plot showing the tracking of clusters, where blocks represent clusters and stream fields represent common patients.
+- A flowchart visualizing cluster-trajectories, with blocks representing clusters and arrow thickness indicating the number of common patients.
+- Cluster characteristics, including the two most used drugs, sex ratio, and total number of patients.
+- Options to choose between the two clustering strategies and display clusters above a selected size limit.
 
-## R Shiny app
+## Modifying the Environment
 
-To visualize the tracking of clusters and the cluster-trajectories from the simulated data, we developped an R Shiny app. The tracking of clusters is visualized using an alluvial plot, in which the blocks represent the clusters and the stream fields between the blocks represent the number of common patients. The cluster-trajectories are visualized using a flowchart composed of blocks representing the clusters. The arrow thickness between the blocks represents the number of common patients. All clusters displayed in the flowchart are characterized by the two most used drugs (name, percentage of patients receiving the drug), the sex ratio (SR) and the total number of patients (n). These clusters are named with the age at which it was identified and its label (age.label).
+If you need to modify the development environment:
 
-![example visualization](Figures/shiny_prog.png)
+1. Edit the `Dockerfile` in the `.devcontainer` directory.
+2. Rebuild the container:
+   - Open the command palette in VS Code (Ctrl+Shift+P)
+   - Select "Remote-Containers: Rebuild Container"
 
-This R shiny app allows to choose between the two clustering strategies and to display clusters greater than or equal to the selected limit size. The following code should be executed in R to launch the application.
+## Updating Dependencies
 
-```{r}
-if(!requireNamespace("shiny", quietly = TRUE)) install.packages("shiny")
-library(shiny)
+### Python Dependencies
 
-runGitHub("Cluster-tracking", "JudithLamb")
-```
+1. Update `requirements.txt` with new packages.
+2. Rebuild the container as described above.
+
+### R Dependencies
+
+1. In the R console within the container, use `renv::install()` to install new packages.
+2. Update the `renv.lock` file:
+   ```R
+   renv::snapshot()
+   ```
+3. Commit the updated `renv.lock` file to the repository.
+
+## Troubleshooting
+
+- If you encounter issues with package versions, ensure your `requirements.txt` and `renv.lock` files are up to date.
+- For problems with the container, try rebuilding it from scratch: delete the Docker image and rebuild using the "Remote-Containers: Rebuild Container" command in VS Code.
+- If you're using the pre-built image and encounter issues, try pulling the latest version of the image or switch to building the image locally.
+
+## License
+
+This project is licensed under the [LICENSE NAME] - see the [LICENSE](LICENSE) file for details.
 
 ## References
 
-Santo Fortunato. “Community detection in graphs”. In: Physics reports 486.3-5 (2010), pp. 75–174.
+1. Santo Fortunato. "Community detection in graphs". In: Physics reports 486.3-5 (2010), pp. 75–174.

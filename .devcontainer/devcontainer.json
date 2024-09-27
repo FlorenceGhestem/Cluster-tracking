@@ -1,17 +1,18 @@
 {
-	"name": "Cluster-tracking",
+	"name": "Cluster-Tracking Environment",
 	"build": {
 			"dockerfile": "Dockerfile",
 			"context": ".."
 	},
+	"settings": {
+			"terminal.integrated.shell.linux": "/bin/bash",
+			"python.pythonPath": "/usr/bin/python3",
+			"r.rterm.linux": "/usr/bin/R"
+	},
 	"extensions": [
 			"ms-python.python",
-			"ms-python.vscode-pylance",
-			"ms-azuretools.vscode-docker"
+			"reditorsupport.r"
 	],
-	"settings": {
-			"python.pythonPath": "/usr/local/bin/python",
-			"python.linting.enabled": true,
-			"python.linting.pylintEnabled": true
-	}
+	"forwardPorts": [3838],
+	"postCreateCommand": "echo 'Development container is ready!'"
 }
