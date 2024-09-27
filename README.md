@@ -49,63 +49,32 @@ This repository aims to provide an environment to run the code with the right de
 
 There are two ways to set up the development environment: using the pre-built image from GitHub Container Registry or building the image locally.
 
-### Option 1: Using the Pre-built Image (Recommended)
+### Using the Pre-built Image
 
 1. Ensure you have Docker installed and running on your machine.
 
 2. Pull the pre-built image from GitHub Container Registry:
 
    ```{.sh}
-   docker pull ghcr.io/YOUR_GITHUB_USERNAME/your-repo-name:latest
+   docker pull ghcr.io/florenceghestem/cluster-tracking:latest
    ```
 
-   Replace `YOUR_GITHUB_USERNAME` and `your-repo-name` with the appropriate values.
-
-3. If the repository is private, you'll need to authenticate with GitHub Container Registry first:
-
-   ```{.sh}
-   echo $GITHUB_PAT | docker login ghcr.io -u YOUR_GITHUB_USERNAME --password-stdin
-   ```
-
-   Replace `$GITHUB_PAT` with your GitHub Personal Access Token.
-
-4. Clone this repository:
+3. Clone this repository:
 
    ```{.sh}
    git clone https://github.com/FlorenceGhestem/Cluster-tracking.git
    cd Cluster-tracking
    ```
 
-5. Open the repository in Visual Studio Code:
+4. Open the repository in Visual Studio Code:
 
    ```{.sh}
    code .
    ```
 
-6. When prompted by VS Code, click "Reopen in Container" or use the command palette (F1) and select "Remote-Containers: Reopen in Container".
+5. When prompted by VS Code, click "Reopen in Container" or use the command palette (F1) and select "Remote-Containers: Reopen in Container".
 
-7. VS Code will use the pre-built image to create your development container.
-
-### Option 2: Building the Image Locally
-
-If you prefer to build the image locally or need to make modifications:
-
-1. Clone this repository:
-
-   ```{.sh}
-   git clone https://github.com/FlorenceGhestem/Cluster-tracking.git
-   cd Cluster-tracking
-   ```
-
-2. Open the repository in Visual Studio Code:
-
-   ```{.sh}
-   code .
-   ```
-
-3. When prompted by VS Code, click "Reopen in Container" or use the command palette (Ctrl+Shift+P) and select "Remote-Containers: Reopen in Container".
-
-4. VS Code will build the Docker image based on the Dockerfile in the `.devcontainer` directory. This may take a few minutes the first time.
+6. VS Code will use the pre-built image to create your development container.
 
 ## Using the Development Environment
 
