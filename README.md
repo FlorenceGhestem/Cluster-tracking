@@ -81,16 +81,11 @@ There are two ways to set up the development environment: using the pre-built im
 ### Running Python Scripts
 
 1. Open a terminal in VS Code (Terminal -> New Terminal).
-2. Navigate to the Python source directory:
+
+2. Run the Python script:
 
    ```{.sh}
-   cd src/python
-   ```{.sh}
-
-3. Run the Python script:
-
-   ```{.sh}
-   python cluster_tracking.py
+   python src/python/cluster_tracking.py
    ```
 
 ### Running the R Shiny App
