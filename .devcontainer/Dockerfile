@@ -49,9 +49,6 @@ COPY renv.lock /tmp/renv.lock
 RUN R -e "install.packages('renv', repos = 'https://cloud.r-project.org/')" && \
     R -e "renv::restore(lockfile = '/tmp/renv.lock')"
 
-# Install Shiny
-RUN R -e "install.packages('shiny', repos='https://cloud.r-project.org/')"
-
 # Set working directory
 WORKDIR /workspace
 
