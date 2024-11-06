@@ -25,6 +25,7 @@ RUN apt-get update && apt-get install -y \
     libcurl4-openssl-dev \
     libsqlite3-dev \
     zlib1g-dev \
+    libglpk-dev \
     && rm -rf /var/lib/apt/lists/*
 
 # Install Python 3.8
@@ -53,7 +54,7 @@ RUN R -e "install.packages('renv', repos = 'https://cloud.r-project.org/')" && \
 WORKDIR /workspace
 
 # Set environment variables
-ENV PYTHONPATH="/workspace/src/python:${PYTHONPATH}"
+ENV PYTHONPATH="/workspace/src/python:/usr/local/lib/python3.8/site-packages"
 ENV R_LIBS_USER="/workspace/renv/library"
 
 CMD ["/bin/bash"]

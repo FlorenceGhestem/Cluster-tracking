@@ -1,6 +1,6 @@
 {
 	"name": "Cluster-Tracking Environment",
-	"image": "ghcr.io/florenceghestem/cluster-tracking:latest",
+	"image": "ghcr.io/florenceghestem/cluster-tracking/cluster-tracking-env:latest",
 	"customizations": {
 		"vscode": {
 			"extensions": [
